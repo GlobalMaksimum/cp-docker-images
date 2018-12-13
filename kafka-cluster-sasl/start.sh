@@ -1,3 +1,11 @@
+if [[ -z "${KAFKA_SASL_NIC}" ]]; then
+    echo "you should set KAFKA_SASL_NIC env"
+    exit 1
+fi
+
+export KAFKA_SASL_IP=`ifconfig $KAFKA_SASL_NIC | grep 'inet ' | awk '{print $2}'`
+echo "setting KAFKA_SASL_IP to $KAFKA_SASL_IP"
+
 docker-compose create kerberos
 docker-compose start kerberos
 for principal in zookeeper1 zookeeper2 zookeeper3

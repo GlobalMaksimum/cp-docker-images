@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -92,8 +92,24 @@
         {
           "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions)",
           "format": "time_series",
+          "groupBy": [],
           "intervalFactor": 1,
-          "refId": "A"
+          "measurement": "kafka_replica_manager",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "UnderReplicatedPartitions.Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": "1",
@@ -172,8 +188,37 @@
         {
           "expr": "sum(kafka_controller_kafkacontroller_activecontrollercount)",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
-          "refId": "A"
+          "measurement": "kafka_controller",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select sum(\"last\") from (SELECT last(\"ActiveControllerCount.Value\") FROM \"kafka_controller\" WHERE $timeFilter GROUP BY \"host\")",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "ActiveControllerCount.Value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": "2",
@@ -252,8 +297,24 @@
         {
           "expr": "sum(kafka_controller_kafkacontroller_offlinepartitionscount)",
           "format": "time_series",
+          "groupBy": [],
           "intervalFactor": 1,
-          "refId": "A"
+          "measurement": "kafka_controller",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "OfflinePartitionsCount.Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": "0",
@@ -310,9 +371,60 @@
         {
           "expr": "rate(kafka_server_kafkarequesthandlerpool_requesthandleravgidlepercent[$__range])/10000000",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
-          "refId": "A"
+          "measurement": "kafka_requesthandleravgidlepercent",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              },
+              {
+                "params": [
+                  " / 10000000"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [
@@ -354,7 +466,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "percent",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -412,11 +524,35 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "kafka_server_delayedoperationpurgatory_purgatorysize_delayedoperation_produce",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
-          "refId": "A"
+          "measurement": "kafka_purgatory",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Produce.NumDelayedOperations"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -510,12 +646,58 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_totalproducerequests_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "TotalProduceRequestsPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -538,7 +720,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "reqps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -596,12 +778,58 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_failedproducerequests_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "FailedProduceRequestsPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -624,7 +852,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "reqps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -682,11 +910,57 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_totalfetchrequests_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "TotalFetchRequestsPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -709,7 +983,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "reqps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -767,11 +1041,57 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_failedfetchrequests_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "FailedFetchRequestsPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -794,7 +1114,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "reqps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -865,11 +1185,112 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_messagesin_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "MessagesInPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "$tag_host-$tag_topic",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "topic"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "kafka_topic",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "MessagesInPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "10s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -892,7 +1313,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "ops",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -950,13 +1371,59 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_bytesin_total[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "instant": false,
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "BytesInPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1037,11 +1504,57 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "rate(kafka_server_brokertopicmetrics_bytesout_total{job=\"kafka\"}[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "interval": "20s",
           "intervalFactor": 1,
-          "refId": "A"
+          "measurement": "kafka_topics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "BytesOutPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1135,11 +1648,35 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "kafka_server_replicamanager_leadercount",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
-          "refId": "A"
+          "measurement": "kafka_replica_manager",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "LeaderCount.Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1220,11 +1757,35 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "kafka_server_replicamanager_partitioncount",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
-          "refId": "A"
+          "measurement": "kafka_replica_manager",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "PartitionCount.Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1305,11 +1866,53 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host-$tag_topic-$tag_partition-$tag_clientId",
           "expr": "kafka_server_fetcherlagmetrics_consumerlag",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "topic"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "partition"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "clientId"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{clientId}}-{{topic}}-{{partition}}",
-          "refId": "A"
+          "measurement": "kafka_fetcherlagmetrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1390,18 +1993,110 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host-Clean",
           "expr": "rate(kafka_controller_controllerstats_leaderelectionrateandtimems[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-clean",
-          "refId": "A"
+          "measurement": "kafka_controller",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "LeaderElectionRateAndTimeMs.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         },
         {
+          "alias": "$tag_host-Unclean",
           "expr": "rate(kafka_controller_controllerstats_uncleanleaderelectionspersec[$__range])",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-unclean",
-          "refId": "B"
+          "measurement": "kafka_controller",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "UncleanLeaderElectionsPerSec.Count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "10s"
+                ],
+                "type": "non_negative_derivative"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1482,11 +2177,35 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$tag_host",
           "expr": "kafka_server_replicafetchermanager_maxlag",
           "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "host"
+              ],
+              "type": "tag"
+            }
+          ],
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
-          "refId": "A"
+          "measurement": "kafka_replicafetchermanager",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1538,7 +2257,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1569,5 +2288,5 @@
   "timezone": "",
   "title": "Kafka Server",
   "uid": "2l0o6KEiz",
-  "version": 43
+  "version": 14
 }

@@ -13,17 +13,17 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
       JMX_PORT: 2171
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=2170:/etc/prometheus/zookeeper.yml -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_1_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=2170,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_1_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     network_mode: host
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   zookeeper-sasl-2:
     image: confluentinc/cp-zookeeper:5.0.1
@@ -37,17 +37,17 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
       JMX_PORT: 2271
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=2270:/etc/prometheus/zookeeper.yml -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_2_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=2270,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_2_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     network_mode: host
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
 
   zookeeper-sasl-3:
@@ -62,17 +62,17 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
       JMX_PORT: 2371
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=2370:/etc/prometheus/zookeeper.yml -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_3_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=2370,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_3_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     network_mode: host
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   kerberos:
     image: confluentinc/cp-kerberos:5.0.1
@@ -85,7 +85,7 @@ services:
       - /dev/urandom:/dev/random
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   kafka-sasl-1:
     image: confluentinc/cp-kafka:5.0.1
@@ -102,15 +102,15 @@ services:
       KAFKA_SASL_KERBEROS_SERVICE_NAME: kafka
       KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
       JMX_PORT: 9171
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9170:/etc/prometheus/kafka.yml -Djava.security.auth.login.config=/etc/kafka/secrets/broker1_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=9170,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/broker1_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   kafka-sasl-2:
     image: confluentinc/cp-kafka:5.0.1
@@ -126,15 +126,15 @@ services:
       KAFKA_SASL_KERBEROS_SERVICE_NAME: kafka
       KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
       JMX_PORT: 9271
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9270:/etc/prometheus/kafka.yml -Djava.security.auth.login.config=/etc/kafka/secrets/broker2_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=9270,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/broker2_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   kafka-sasl-3:
     image: confluentinc/cp-kafka:5.0.1
@@ -150,22 +150,39 @@ services:
       KAFKA_SASL_KERBEROS_SERVICE_NAME: kafka
       KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
       JMX_PORT: 9371
-      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9370:/etc/prometheus/kafka.yml -Djava.security.auth.login.config=/etc/kafka/secrets/broker3_jaas.conf
+      KAFKA_OPTS: -javaagent:/etc/influxdb/jolokia.jar=port=9370,host=*,agentContext=/jolokia -Djava.security.auth.login.config=/etc/kafka/secrets/broker3_jaas.conf
         -Djava.security.krb5.conf=/etc/kafka/secrets/krb.conf
         -Dsun.security.krb5.debug=true
     volumes:
       - ${KAFKA_SASL_SECRETS_DIR}:/etc/kafka/secrets
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     extra_hosts:
       - "moby:127.0.0.1"
-      - "quickstart.confluent.io:10.3.141.213"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
-  prometheus:
-    image: prom/prometheus
+  telegraf:
+    image: telegraf
     network_mode: host
     volumes:
-      - ${KAFKA_SASL_PROMETHEUS_DIR}:/etc/prometheus
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/telegraf
+    depends_on:
+      - influxdb
+    extra_hosts:
+      - "moby:127.0.0.1"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
+
+  influxdb:
+    image: influxdb
+    network_mode: host
+    volumes:
+      - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
+    extra_hosts:
+      - "moby:127.0.0.1"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   grafana:
     image: grafana/grafana
     network_mode: host
+    extra_hosts:
+      - "moby:127.0.0.1"
+      - "quickstart.confluent.io:${KAFKA_SASL_IP}"
