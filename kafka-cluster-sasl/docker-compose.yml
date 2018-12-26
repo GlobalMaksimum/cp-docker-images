@@ -172,8 +172,13 @@ services:
       - "quickstart.confluent.io:${KAFKA_SASL_IP}"
 
   influxdb:
-    image: influxdb
+    image: influxdb:latest
     network_mode: host
+    environment:
+      INFLUXDB_DB: "kafka"
+      INFLUXDB_HTTP_AUTH_ENABLED: "true"
+      INFLUXDB_ADMIN_USER: "admin"
+      INFLUXDB_ADMIN_PASSWORD: "admin"
     volumes:
       - ${KAFKA_SASL_INFLUXDB_DIR}:/etc/influxdb
     extra_hosts:

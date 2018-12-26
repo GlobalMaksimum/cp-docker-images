@@ -3,6 +3,16 @@ if [[ -z "${KAFKA_SASL_NIC}" ]]; then
     exit 1
 fi
 
+if [[ -z "${KAFKA_SASL_SECRETS_DIR}" ]]; then
+    echo "you should set KAFKA_SASL_SECRETS_DIR env"
+    exit 1
+fi
+
+if [[ -z "${KAFKA_SASL_INFLUXDB_DIR}" ]]; then
+    echo "you should set KAFKA_SASL_INFLUXDB_DIR env"
+    exit 1
+fi
+
 export KAFKA_SASL_IP=`ifconfig $KAFKA_SASL_NIC | grep 'inet ' | awk '{print $2}'`
 echo "setting KAFKA_SASL_IP to $KAFKA_SASL_IP"
 
