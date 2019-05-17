@@ -1,0 +1,118 @@
+---
+version: '2'
+services:
+  zookeeper-sasl-1:
+    image: confluentinc/cp-zookeeper:5.0.1
+    # This is required because Zookeeper can fail if kerberos is still initializing.
+    restart: on-failure:3
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 22181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
+      JMX_PORT: 2171
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    network_mode: host
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+  zookeeper-sasl-2:
+    image: confluentinc/cp-zookeeper:5.0.1
+    # This is required because Zookeeper can fail if kerberos is still initializing.
+    restart: on-failure:3
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
+      JMX_PORT: 2271
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    network_mode: host
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+
+  zookeeper-sasl-3:
+    image: confluentinc/cp-zookeeper:5.0.1
+    # This is required because Zookeeper can fail if kerberos is still initializing.
+    restart: on-failure:3
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 42181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: quickstart.confluent.io:22888:23888;quickstart.confluent.io:32888:33888;quickstart.confluent.io:42888:43888
+      JMX_PORT: 2371
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    network_mode: host
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+  kafka-sasl-1:
+    image: confluentinc/cp-kafka:5.0.1
+    network_mode: host
+    # This is required because Kafka can fail if kerberos is still initializing.
+    restart: on-failure:3
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: quickstart.confluent.io:22181,quickstart.confluent.io:32181,quickstart.confluent.io:42181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://quickstart.confluent.io:19094
+      KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
+      JMX_PORT: 9171
+      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9170:/etc/prometheus/kafka.yml
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+  kafka-sasl-2:
+    image: confluentinc/cp-kafka:5.0.1
+    network_mode: host
+    restart: on-failure:3
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: quickstart.confluent.io:22181,quickstart.confluent.io:32181,quickstart.confluent.io:42181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://quickstart.confluent.io:29094
+      KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
+      JMX_PORT: 9271
+      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9270:/etc/prometheus/kafka.yml
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+  kafka-sasl-3:
+    image: confluentinc/cp-kafka:5.0.1
+    network_mode: host
+    restart: on-failure:3
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: quickstart.confluent.io:22181,quickstart.confluent.io:32181,quickstart.confluent.io:42181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://quickstart.confluent.io:39094
+      KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
+      JMX_PORT: 9371
+      KAFKA_OPTS: -javaagent:/etc/prometheus/jmx_prometheus_javaagent-0.3.1.jar=9370:/etc/prometheus/kafka.yml
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+
+  grafana:
+    image: grafana/grafana
+    network_mode: host
+    extra_hosts:
+      - "quickstart.confluent.io:${DOCKER_HOST_IP}"
+  
+  prometheus:
+    image: prom/prometheus
+    network_mode: host
+    volumes:
+      - ${PROMETHEUS_DIR}:/etc/prometheus
