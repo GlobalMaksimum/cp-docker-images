@@ -309,8 +309,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_kafkarequesthandlerpool_requesthandleravgidlepercent[$__range])/10000000",
+          "expr": "rate(kafka_server_kafkarequesthandlerpool_requesthandleravgidlepercent[$__interval])/10000000",
           "format": "time_series",
+          "instant": false,
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -416,6 +418,7 @@
         {
           "expr": "kafka_server_delayedoperationpurgatory_purgatorysize_delayedoperation_produce",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -513,9 +516,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_totalproducerequests_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_totalproducerequests_total[$__interval])",
           "format": "time_series",
-          "interval": "",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -600,9 +603,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_failedproducerequests_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_failedproducerequests_total[$__interval])",
           "format": "time_series",
-          "interval": "",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -687,8 +690,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_totalfetchrequests_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_totalfetchrequests_total[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -773,8 +777,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_failedfetchrequests_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_failedfetchrequests_total[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -872,9 +877,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_messagesin_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_messagesin_total[$__interval])",
           "format": "time_series",
-          "interval": "",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -959,10 +964,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_bytesin_total[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_bytesin_total[$__interval])",
           "format": "time_series",
           "instant": false,
-          "interval": "10s",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{topic}}",
           "refId": "A"
@@ -1047,7 +1052,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_server_brokertopicmetrics_bytesout_total{job=\"kafka\"}[$__range])",
+          "expr": "rate(kafka_server_brokertopicmetrics_bytesout_total{job=\"kafka\"}[$__interval])",
           "format": "time_series",
           "interval": "20s",
           "intervalFactor": 1,
@@ -1148,6 +1153,7 @@
         {
           "expr": "kafka_server_replicamanager_leadercount",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -1234,6 +1240,7 @@
         {
           "expr": "kafka_server_replicamanager_partitioncount",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -1320,6 +1327,7 @@
         {
           "expr": "kafka_server_fetcherlagmetrics_consumerlag",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{clientId}}-{{topic}}-{{partition}}",
           "refId": "A"
@@ -1403,15 +1411,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_controller_controllerstats_leaderelectionrateandtimems[$__range])",
+          "expr": "rate(kafka_controller_controllerstats_leaderelectionrateandtimems[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-clean",
           "refId": "A"
         },
         {
-          "expr": "rate(kafka_controller_controllerstats_uncleanleaderelectionspersec[$__range])",
+          "expr": "rate(kafka_controller_controllerstats_uncleanleaderelectionspersec[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-unclean",
           "refId": "B"
@@ -1463,6 +1473,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Maximum lag in messages between the follower and leader replicas. This is controlled by the replica.lag.max.messages config.",
       "fill": 1,
       "gridPos": {
@@ -1497,6 +1508,7 @@
         {
           "expr": "kafka_server_replicafetchermanager_maxlag",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -1582,5 +1594,5 @@
   "timezone": "",
   "title": "Kafka Server",
   "uid": "2l0o6KEiz",
-  "version": 9
+  "version": 16
 }

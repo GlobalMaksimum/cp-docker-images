@@ -23,7 +23,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 9
       },
       "id": 8,
       "title": "Processing Times",
@@ -40,7 +40,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 10
       },
       "id": 4,
       "legend": {
@@ -68,6 +68,7 @@
         {
           "expr": "kafka_network_requestchannel_requestqueuesize",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}",
           "refId": "A"
@@ -125,7 +126,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 10
       },
       "id": 10,
       "legend": {
@@ -151,8 +152,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_network_requestmetrics_requestqueuetimems{request=~\"Produce|OffsetCommit\"}[$__range])",
+          "expr": "rate(kafka_network_requestmetrics_requestqueuetimems{request=~\"Produce|OffsetCommit\"}[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{request}}",
           "refId": "A"
@@ -211,7 +213,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 19
       },
       "id": 6,
       "legend": {
@@ -237,8 +239,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_network_requestmetrics_totaltimems{request=~\"Produce|OffsetCommit\"}[$__range])",
+          "expr": "rate(kafka_network_requestmetrics_totaltimems{request=~\"Produce|OffsetCommit\"}[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{request}}",
           "refId": "A"
@@ -297,7 +300,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 19
       },
       "id": 2,
       "legend": {
@@ -323,8 +326,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_network_requestmetrics_requests_total[$__range])",
+          "expr": "rate(kafka_network_requestmetrics_requests_total[$__interval])",
           "format": "time_series",
+          "interval": "20s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}-{{job}}-{{request}}",
           "refId": "A"
