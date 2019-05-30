@@ -1,0 +1,1 @@
+./kafka-producer-perf-test --num-records 10000000 --topic test --record-size 100  --throughput 10 --producer-props bootstrap.servers=quickstart.confluent.io:39094 batch.size=1024
